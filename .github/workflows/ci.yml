@@ -31,9 +31,10 @@ jobs:
       run: |
         echo Add other actions to build,
         echo test, and deploy your project.
+
   go-pipeline:
     name: Go Checks
     runs-on: ubuntu-latest
     steps:
-    - name: go1.12 test
-      uses: shoukoo/golang-pipeline/go1.12/test@master
+    - name: go1.14 linter
+      uses: shoukoo/golang-pipeline/go1.11/linter@master
