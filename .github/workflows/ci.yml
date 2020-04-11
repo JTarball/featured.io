@@ -23,6 +23,8 @@ jobs:
         run: gofmt -l .
       - name: Lint
         run: |
+          export GOPATH=$HOME/go
+          export GOBIN=$HOME/go/bin
           go get golang.org/x/lint/golint
           golint .
       - name: Test
