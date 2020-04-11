@@ -8,9 +8,9 @@ A distributed feature flag tool for Kubernetes
 
 ## Status
 
-* active development *
+*active development
 
-### Development Stage
+### Task list
 - [ ] Implement a Kubernetes operator
   - [x] Generate basic CRD / API
     - [x] Import auto-generated code script
