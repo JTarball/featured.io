@@ -37,4 +37,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: go1.14 linter
-      uses: shoukoo/golang-pipeline/go1.14/linter@master
+      uses: shoukoo/golang-pipeline/go1.11/linter@master
