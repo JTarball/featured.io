@@ -21,6 +21,10 @@ var (
 	configMapsGroup = schema.GroupVersionResource{Group: "", Version: "v1", Resource: "configmaps"}
 )
 
+func newConfigMapListAction(ns string, configMap *corev1.ConfigMap) kubetesting.ListActionImpl {
+	return kubetesting.NewListAction(configMapsGroup, schema.GroupVersionKind{Kind: "ConfigMap", Version: "v1"}, ns, metav1.ListOptions{})
+}
+
 func newConfigMapUpdateAction(ns string, configMap *corev1.ConfigMap) kubetesting.UpdateActionImpl {
 	return kubetesting.NewUpdateAction(configMapsGroup, ns, configMap)
 }
@@ -33,8 +37,12 @@ func newConfigMapCreateAction(ns string, configMap *corev1.ConfigMap) kubetestin
 	return kubetesting.NewCreateAction(configMapsGroup, ns, configMap)
 }
 
-// TestConfigMapServiceGetCreateOrUpdate tests the CreateOrUpdateConfigMap method
-func TestConfigMapServiceGetCreateOrUpdate(t *testing.T) {
+func newConfigMapDeleteAction(ns string, name string) kubetesting.DeleteActionImpl {
+	return kubetesting.NewDeleteAction(configMapsGroup, ns, name)
+}
+
+// TestConfigMapControlGetCreateOrUpdate tests the CreateOrUpdateConfigMap method
+func TestConfigMapControlGetCreateOrUpdate(t *testing.T) {
 	testConfigMap := &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:            "testconfigmap1",
@@ -93,7 +101,6 @@ func TestConfigMapServiceGetCreateOrUpdate(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			//assert := assert.New(t)
 
 			// Mock Kubernetes Client
 			mcli := &kubernetes.Clientset{}
@@ -104,12 +111,143 @@ func TestConfigMapServiceGetCreateOrUpdate(t *testing.T) {
 				return true, nil, test.errorOnCreation
 			})
 
-			service := feature.NewConfigMapControl(mcli)
-			_, err := service.CreateOrUpdateConfigMap(testns, test.configMap)
+			control := feature.NewConfigMapControl(mcli)
+			_, err := control.CreateOrUpdateConfigMap(testns, test.configMap)
 
 			if test.expectErr {
 				require.Error(t, err)
 			} else {
+				require.NoError(t, err)
+				require.Equal(t, test.expActions, mcli.Actions()) // Check calls to kubernetes client.
+			}
+		})
+	}
+}
+
+// TestConfigMapControlDelete tests the Delete method
+func TestConfigMapControlDelete(t *testing.T) {
+	testConfigMap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "testconfigmap1",
+			ResourceVersion: "10",
+		},
+	}
+
+	testns := "testns"
+
+	tests := []struct {
+		name            string
+		configMap       *corev1.ConfigMap
+		errorOnGet      error
+		errorOnCreation error
+		expActions      []kubetesting.Action
+		expectErr       bool
+	}{
+		{
+			name:            "Delete a configmap.",
+			configMap:       testConfigMap,
+			errorOnGet:      nil,
+			errorOnCreation: nil,
+			expActions: []kubetesting.Action{
+				newConfigMapDeleteAction(testns, testConfigMap.Name),
+			},
+			expectErr: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			// Mock Kubernetes Client
+			mcli := &kubernetes.Clientset{}
+			mcli.AddReactor("delete", "configmaps", func(action kubetesting.Action) (bool, runtime.Object, error) {
+				return true, nil, test.errorOnGet
+			})
+
+			control := feature.NewConfigMapControl(mcli)
+			err := control.DeleteConfigMap(testns, test.configMap.Name)
+
+			if test.expectErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, test.expActions, mcli.Actions()) // Check calls to kubernetes client.
+			}
+		})
+	}
+}
+
+// TestConfigMapControlList tests the List method
+func TestConfigMapControlList(t *testing.T) {
+	testConfigMap := &corev1.ConfigMap{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:            "testconfigmap1",
+			ResourceVersion: "10",
+		},
+	}
+
+	testns := "testns"
+
+	tests := []struct {
+		name                string
+		configMap           *corev1.ConfigMap
+		listConfigMapResult *corev1.ConfigMapList
+		errorOnGet          error
+		errorOnCreation     error
+		expActions          []kubetesting.Action
+		expectErr           bool
+	}{
+		{
+			name:                "Gather a list of configmaps where no items are returned.",
+			listConfigMapResult: &corev1.ConfigMapList{},
+			errorOnGet:          nil,
+			errorOnCreation:     nil,
+			expActions: []kubetesting.Action{
+				newConfigMapListAction(testns, testConfigMap),
+			},
+			expectErr: false,
+		},
+		{
+			name: "Gather a list of configmaps where items are returned.",
+			listConfigMapResult: &corev1.ConfigMapList{
+				Items: []corev1.ConfigMap{
+					corev1.ConfigMap{
+						ObjectMeta: metav1.ObjectMeta{
+							Name:            "test-configmap",
+							Namespace:       testns,
+							OwnerReferences: []metav1.OwnerReference{},
+						},
+						Data: map[string]string{
+							"config.yml": "{\"vhosts\": [{\"name\": \"/backend\"}",
+						},
+					},
+				},
+			},
+			errorOnGet:      nil,
+			errorOnCreation: nil,
+			expActions: []kubetesting.Action{
+				newConfigMapListAction(testns, testConfigMap),
+			},
+			expectErr: false,
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+
+			// Mock Kubernetes Client
+			mcli := &kubernetes.Clientset{}
+			mcli.AddReactor("list", "configmaps", func(action kubetesting.Action) (bool, runtime.Object, error) {
+				return true, test.listConfigMapResult, test.errorOnGet
+			})
+
+			control := feature.NewConfigMapControl(mcli)
+			list, err := control.ListConfigMaps(testns)
+
+			if test.expectErr {
+				require.Error(t, err)
+			} else {
+				require.Equal(t, test.listConfigMapResult, list)
 				require.NoError(t, err)
 				require.Equal(t, test.expActions, mcli.Actions()) // Check calls to kubernetes client.
 			}
