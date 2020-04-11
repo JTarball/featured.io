@@ -22,6 +22,8 @@ jobs:
       - name: Format
         run: gofmt -l .
       - name: Lint
-        run: golint .
+        run: |
+          go get golang.org/x/lint/golint
+          golint .
       - name: Test
         run: go -v test ./...
