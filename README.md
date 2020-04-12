@@ -14,9 +14,12 @@ A distributed feature flag tool for Kubernetes
 - [ ] Implement a Kubernetes operator
   - [x] Generate basic CRD / API
     - [x] Import auto-generated code script
-  - [ ] Implement a controller
+  - [x] Implement a basic controller
     - [x] Implement a control interface for configmaps
       - [x] Add some basic tests
+  - [ ] Implement basic docker build for operator
+    - [x] Write dockerfile for operator
+    - [ ] Automate docker build/push process
 - [ ] Implement requirements for kubernetes operator
 - [ ] Helm chart to deploy operator
 - [ ] Produce documentation on godoc website

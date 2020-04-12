@@ -25,8 +25,8 @@ type CMDFlags struct {
 
 // Init initializes and parse the flags
 func (c *CMDFlags) Init() {
-	flag.StringVar(&c.LogLevel, "debug", "INFO", "The log level")
-	flag.BoolVar(&c.DevMode, "dev", true, "A development flag that will allow to run the operator outside a kubernetes cluster")
+	flag.StringVar(&c.LogLevel, "loglevel", "INFO", "The log level")
+	flag.BoolVar(&c.DevMode, "dev", false, "A development flag that will allow to run the operator outside a kubernetes cluster")
 
 	kubehome := filepath.Join(homedir.HomeDir(), ".kube", "config")
 	flag.StringVar(&c.KubeConfig, "kubeconfig", kubehome, "The kubernetes configuration path, only used when development mode enabled")
