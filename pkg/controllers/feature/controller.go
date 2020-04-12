@@ -82,7 +82,7 @@ type FeatureController struct {
 	recorder record.EventRecorder
 }
 
-// NewFeatureController returns a new sample controller
+// NewFeatureController returns a new feature controller
 func NewFeatureController(
 	kubeclientset kubernetes.Interface,
 	featureclientset clientset.Interface,
@@ -90,8 +90,8 @@ func NewFeatureController(
 	featureflagInformer informers.FeatureFlagInformer) *FeatureController {
 
 	// Create event broadcaster
-	// Add sample-controller types to the default Kubernetes Scheme so Events can be
-	// logged for sample-controller types.
+	// Add feature-controller types to the default Kubernetes Scheme so Events can be
+	// logged for feature-controller types.
 	utilruntime.Must(samplescheme.AddToScheme(scheme.Scheme))
 	klog.V(4).Info("Creating event broadcaster")
 	eventBroadcaster := record.NewBroadcaster()

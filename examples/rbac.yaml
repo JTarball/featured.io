@@ -1,0 +1,13 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: featuremonitors.featured.io.crd
+rules:
+- apiGroups:
+  - featured.io
+  resources:
+  - featuremonitor
+  - featuremonitor/finalizers
+  verbs: [ get, list, create, update, delete, deletecollection, watch ]
+  

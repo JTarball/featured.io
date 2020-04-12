@@ -1,0 +1,7 @@
+apiVersion: featurecontroller.featured.io/v1alpha1
+kind: FeatureFlag
+metadata:
+  name: example-featureflag
+spec:
+  configmapName: example-foo
+  replicas: 1

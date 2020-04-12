@@ -19,3 +19,5 @@ A distributed feature flag tool for Kubernetes
       - [x] Add some basic tests
 - [ ] Implement requirements for kubernetes operator
 - [ ] Helm chart to deploy operator
+- [ ] Produce documentation on godoc website
+
