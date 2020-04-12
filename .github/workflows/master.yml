@@ -37,8 +37,8 @@ jobs:
       #     export PATH=${PATH}:`go env GOPATH`/bin
       #     go get -u honnef.co/go/tools/cmd/staticcheck
       #     staticcheck ./...
-      - name: Test
-        run: go test -v ./...
+      - name: Operator Packages Unit Test
+        run: go test -v ./pkg/...
 
   docker_build_push:
     name: Docker build
@@ -54,3 +54,29 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: featured/operator
           tags: master
+    - name: Create GKE cluster
+      uses: linkerd/linkerd2-action-gcloud@v1.0.1
+      with:
+        cloud_sdk_service_account_key: ${{ secrets.CLOUD_SDK_SERVICE_ACCOUNT_KEY }}
+        gcp_project: ${{ secrets.GCP_PROJECT }}
+        gcp_zone: ${{ secrets.GCP_ZONE }}
+        create: true
+        name: testing-featured-${{ github.run_id }}
+    # - name: Run integration tests
+    #   env:
+    #     GITCOOKIE_SH: ${{ secrets.GITCOOKIE_SH }}
+    #   run: |
+    #     export PATH="`pwd`/bin:$PATH"
+    #     echo "$GITCOOKIE_SH" | bash
+    #     version="$($HOME/.linkerd version --client --short | tr -cd '[:alnum:]-')"
+    #     bin/test-run $HOME/.linkerd
+    #   - name: Acceptance Test - Testing Library
+    #     run: |
+    #       cd acceptance_test
+    #       go test -v ./acceptance_test/testing/...
+    #   - name: Acceptance Test - Helm Library
+    #     run: go test -v ./acceptance_test/helm/...
+    #   - name: Acceptance Test - Unit Tests
+    #     run: go test -v ./...
+    #   - name: Acceptance Test - Integration Tests
+    #     run: go test -v ./...

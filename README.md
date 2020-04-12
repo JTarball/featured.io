@@ -5,6 +5,8 @@
 
 A distributed feature flag tool for Kubernetes
 
+> Requires kubernetes > v1.17
+> Requires helm 3
 
 ## Status
 
@@ -19,8 +21,12 @@ A distributed feature flag tool for Kubernetes
       - [x] Add some basic tests
   - [ ] Implement basic docker build for operator
     - [x] Write dockerfile for operator
-    - [ ] Automate docker build/push process
+    - [x] Automate docker build/push process
 - [ ] Implement requirements for kubernetes operator
 - [ ] Helm chart to deploy operator
+  - [ ] Integration / Acceptance Tests
+    - [x] Add helm template test
+    - [ ] Add helm linting test
+    - [ ] Add helm chart upgrade / rollback test
 - [ ] Produce documentation on godoc website
 

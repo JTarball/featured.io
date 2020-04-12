@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/coreos/go-semver v0.3.0
+	github.com/gruntwork-io/terratest v0.26.3
 	github.com/prometheus/client_golang v1.5.1
 	github.com/sirupsen/logrus v1.5.0
 	github.com/stretchr/testify v1.4.0

@@ -1,0 +1,5 @@
+apiversion: v1
+appversion: "1.0"
+description: A Helm chart for Kubernetes
+name: subchartA
+version: 0.1.56

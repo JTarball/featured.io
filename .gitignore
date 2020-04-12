@@ -1,2 +1,9 @@
 
 *.DS_Store
+
+# editors
+.vscode
+
+# Helm
+**/charts/*.tgz
+**/charts/*
