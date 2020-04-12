@@ -16,5 +16,6 @@ A distributed feature flag tool for Kubernetes
     - [x] Import auto-generated code script
   - [ ] Implement a controller
     - [x] Implement a control interface for configmaps
+      - [x] Add some basic tests
 - [ ] Implement requirements for kubernetes operator
 - [ ] Helm chart to deploy operator
