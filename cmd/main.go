@@ -28,7 +28,7 @@ func main() {
 	log.WithFields(log.Fields{"log.SetLevel": log.GetLevel()}).Info("---- Starting the featured.io operator ----")
 
 	if err = app.Run(flags); err != nil {
-		log.Error("error executing main: %v", err)
+		log.Errorf("error executing main: %v", err)
 		os.Exit(1)
 	}
 }
