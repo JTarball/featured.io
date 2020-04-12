@@ -54,14 +54,14 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: featured/operator
           tags: master
-    - name: Create GKE cluster
-      uses: linkerd/linkerd2-action-gcloud@v1.0.1
-      with:
-        cloud_sdk_service_account_key: ${{ secrets.CLOUD_SDK_SERVICE_ACCOUNT_KEY }}
-        gcp_project: ${{ secrets.GCP_PROJECT }}
-        gcp_zone: ${{ secrets.GCP_ZONE }}
-        create: true
-        name: testing-featured-${{ github.run_id }}
+      - name: Create GKE cluster
+        uses: linkerd/linkerd2-action-gcloud@v1.0.1
+        with:
+          cloud_sdk_service_account_key: ${{ secrets.CLOUD_SDK_SERVICE_ACCOUNT_KEY }}
+          gcp_project: ${{ secrets.GCP_PROJECT }}
+          gcp_zone: ${{ secrets.GCP_ZONE }}
+          create: true
+          name: testing-featured-${{ github.run_id }}
     # - name: Run integration tests
     #   env:
     #     GITCOOKIE_SH: ${{ secrets.GITCOOKIE_SH }}
