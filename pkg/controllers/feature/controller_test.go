@@ -83,10 +83,10 @@ func (f *fixture) newFeatureController() (*FeatureController, informers.SharedIn
 		i.Featurecontroller().V1alpha1().FeatureFlags().Informer().GetIndexer().Add(f)
 	}
 
-	// for _, d := range f.configmapLister {
-	// 	fmt.Println("---- Adding configmap to lister ----")
-	// 	k8sI.Core().V1().ConfigMaps().Informer().GetIndexer().Add(d)
-	// }
+	for _, d := range f.configmapLister {
+		fmt.Println("---- Adding configmap to lister ----")
+		k8sI.Core().V1().ConfigMaps().Informer().GetIndexer().Add(d)
+	}
 
 	return c, i, k8sI
 }
@@ -253,23 +253,24 @@ func TestCreatesDeployment(t *testing.T) {
 
 // TestDoNothing tests that the controller takes no action if the configmap for the CRD FeatureFlag exists already
 func TestDoNothing(t *testing.T) {
-	// f := newFixture(t)
-	// featureflag := newFeatureFlag("test", int32Ptr(1))
-	// d := newConfigMap(featureflag)
+	f := newFixture(t)
+	featureflag := newFeatureFlag("test", int32Ptr(1))
+	d := newConfigMap(featureflag)
 
-	// f.featureflagLister = append(f.featureflagLister, featureflag)
-	// f.objects = append(f.objects, featureflag)
-	// f.configmapLister = append(f.configmapLister, d)
-	// f.kubeobjects = append(f.kubeobjects, d)
-	// fmt.Printf("%v", f)
+	f.featureflagLister = append(f.featureflagLister, featureflag)
+	f.objects = append(f.objects, featureflag)
+	f.configmapLister = append(f.configmapLister, d)
+	f.kubeobjects = append(f.kubeobjects, d)
 
-	// f.expectUpdateFooStatusAction(featureflag)
-	// f.run(getKey(featureflag, t))
+	f.expectUpdateFooStatusAction(featureflag)
+
+	f.run(getKey(featureflag, t))
 }
 
-// func TestUpdateDeployment(t *testing.T) {
+// // TestUpdateConfig tests that a configmap can be updated
+// func TestUpdateConfig(t *testing.T) {
 // 	f := newFixture(t)
-// 	featureflag := newFoo("test", int32Ptr(1))
+// 	featureflag := newFeatureFlag("test", int32Ptr(1))
 // 	d := newConfigMap(featureflag)
 
 // 	// Update replicas
@@ -278,7 +279,7 @@ func TestDoNothing(t *testing.T) {
 
 // 	f.featureflagLister = append(f.featureflagLister, featureflag)
 // 	f.objects = append(f.objects, featureflag)
-// 	f.deploymentLister = append(f.deploymentLister, d)
+// 	f.configmapLister = append(f.configmapLister, d)
 // 	f.kubeobjects = append(f.kubeobjects, d)
 
 // 	f.expectUpdateFooStatusAction(featureflag)
@@ -286,19 +287,19 @@ func TestDoNothing(t *testing.T) {
 // 	f.run(getKey(featureflag, t))
 // }
 
-// func TestNotControlledByUs(t *testing.T) {
-// 	f := newFixture(t)
-// 	featureflag := newFoo("test", int32Ptr(1))
-// 	d := newConfigMap(featureflag)
+func TestNotControlledByUs(t *testing.T) {
+	f := newFixture(t)
+	featureflag := newFeatureFlag("test", int32Ptr(1))
+	d := newConfigMap(featureflag)
 
-// 	d.ObjectMeta.OwnerReferences = []metav1.OwnerReference{}
+	d.ObjectMeta.OwnerReferences = []metav1.OwnerReference{}
 
-// 	f.featureflagLister = append(f.featureflagLister, featureflag)
-// 	f.objects = append(f.objects, featureflag)
-// 	f.deploymentLister = append(f.deploymentLister, d)
-// 	f.kubeobjects = append(f.kubeobjects, d)
+	f.featureflagLister = append(f.featureflagLister, featureflag)
+	f.objects = append(f.objects, featureflag)
+	f.configmapLister = append(f.configmapLister, d)
+	f.kubeobjects = append(f.kubeobjects, d)
 
-// 	f.runExpectError(getKey(featureflag, t))
-// }
+	f.runExpectError(getKey(featureflag, t))
+}
 
 func int32Ptr(i int32) *int32 { return &i }

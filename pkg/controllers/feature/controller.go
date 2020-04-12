@@ -402,7 +402,7 @@ func newConfigMap(featureflag *samplev1alpha1.FeatureFlag) *corev1.ConfigMap {
 
 	return &corev1.ConfigMap{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      featureflag.Name,
+			Name:      featureflag.Spec.ConfigMapName,
 			Namespace: featureflag.Namespace,
 			OwnerReferences: []metav1.OwnerReference{
 				*metav1.NewControllerRef(featureflag, samplev1alpha1.SchemeGroupVersion.WithKind("FeatureFlag")),
