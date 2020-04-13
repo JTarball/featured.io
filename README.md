@@ -26,8 +26,10 @@ A distributed feature flag tool for Kubernetes
 - [ ] Implement requirements for kubernetes operator
 - [ ] Helm chart to deploy operator
   - [ ] Integration / Acceptance Tests
+    - [x] Add defense against Helm 2 
     - [x] Add helm template test
-    - [ ] Add helm linting test
+    - [x] Add helm linting test
     - [ ] Add helm chart upgrade / rollback test
+    - [x] Add support for running simple k8s tests on `kind`
 - [ ] Produce documentation on godoc website
 
