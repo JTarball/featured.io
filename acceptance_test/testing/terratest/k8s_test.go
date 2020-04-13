@@ -53,7 +53,7 @@ func TestGetDeployment(t *testing.T) {
 	k8s.KubectlApplyFromString(t, tc.KubeConfig, configData)
 
 	filters := metav1.ListOptions{LabelSelector: ""}
-	k8s.WaitUntilNumPodsCreated(t, tc.KubeConfig, filters, 2, 2, 5000)
+	k8s.WaitUntilNumPodsCreated(t, tc.KubeConfig, filters, 2, 10, 5000)
 
 	deploymentName, _ := k8s.RunKubectlAndGetOutputE(t, tc.KubeConfig, "get", "deployment", "-n", tc.Namespace, "-o", "name")
 	require.Equal(t, "deployment.apps/nginx-deployment", deploymentName)
@@ -78,7 +78,7 @@ func TestGetDeploymentE(t *testing.T) {
 	k8s.KubectlApplyFromString(t, tc.KubeConfig, configData)
 
 	filters := metav1.ListOptions{LabelSelector: ""}
-	k8s.WaitUntilNumPodsCreated(t, tc.KubeConfig, filters, 2, 2, 5000)
+	k8s.WaitUntilNumPodsCreated(t, tc.KubeConfig, filters, 2, 10, 5000)
 
 	deploymentName, _ := k8s.RunKubectlAndGetOutputE(t, tc.KubeConfig, "get", "deployment", "-n", tc.Namespace, "-o", "name")
 	require.Equal(t, "deployment.apps/nginx-deployment", deploymentName)
