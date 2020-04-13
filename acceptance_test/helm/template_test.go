@@ -1,3 +1,7 @@
+// +build kind
+
+// kind integration test - kubernetes in docker
+
 package helm
 
 import (
@@ -5,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/helm"
-	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/stretchr/testify/require"
 
 	tt "github.com/featured.io/acceptance_test/testing/terratest"
@@ -32,9 +35,7 @@ func TestHelmTemplate(t *testing.T) {
 	require.DirExists(t, chartPath)
 
 	// Ensure helm dependencies
-	logger.Log(t, "---- Adding Helm Repositories ----")
-	helm.RunHelmCommandAndGetOutputE(t, options, "repo", "add", "ambassador", "https://getambassador.io")
-	tt.EnsureHelmDependencies(t, chartPath, false)
+	tt.EnsureHelmDependencies(t, options, chartPath, false)
 
 	// Run helm template with no values changes - We should expect no errors
 	_, err := helm.RenderTemplateE(t, options, chartPath, releaseName, []string{})

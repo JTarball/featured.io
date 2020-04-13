@@ -118,7 +118,7 @@ func GetGitRootPathE(t *testing.T) (string, error) {
 func NewKubeTest(t *testing.T) *KubeTest {
 
 	// Only supports Helm 3
-	tt.IsHelm3(t, false)
+	tt.IsHelm3(t, false, false)
 
 	// Setup a unique test through some test configuration
 	// A K8S unique namespace to ensure "Namespaced" resources - https://terratest.gruntwork.io/docs/testing-best-practices/namespacing/)

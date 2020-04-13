@@ -132,6 +132,17 @@ func getValuesArgsE(t *testing.T, options *helm.Options, args ...string) ([]stri
 	return args, nil
 }
 
+// HelmLint will lint the selected helm chart. This will fail the test if there is an error.
+func HelmLint(t *testing.T, options *helm.Options, chartDir string) {
+	require.NoError(t, HelmLintE(t, options, chartDir))
+}
+
+// HelmLintE will lint the selected helm chart
+func HelmLintE(t *testing.T, options *helm.Options, chartDir string) error {
+	_, err := helm.RunHelmCommandAndGetOutputE(t, options, "lint", chartDir)
+	return err
+}
+
 // HelmDep will build or update the helm dependencies for the selected helm chart. This will fail
 // the test if there is an error.
 func HelmDep(t *testing.T, options *helm.Options, chartDir string) {
@@ -151,14 +162,16 @@ func HelmDepE(t *testing.T, options *helm.Options, chartDir string) error {
 	return err
 }
 
-// EnsureHelmDependencies() builds dependencies from the requirements.yaml file.
-func EnsureHelmDependencies(t *testing.T, chartDir string, skipIfChartsFolderExists bool) {
+// EnsureHelmDependencies builds dependencies from the requirements.yaml file.
+func EnsureHelmDependencies(t *testing.T, options *helm.Options, chartDir string, skipIfChartsFolderExists bool) {
+	IsHelm3(t, false, true)
+
 	if !files.FileExists(chartDir) {
 		require.FailNow(t, "Chart not found: "+chartDir)
 	}
 
-	if !files.FileExists(chartDir + "/requirements.yaml") {
-		logger.Log(t, "Skip chart dependencies - no requirements.yaml")
+	if !files.FileExists(chartDir + "/Chart.yaml") {
+		logger.Log(t, "Skip chart dependencies - no Chart.yaml")
 		return
 	}
 
@@ -167,7 +180,7 @@ func EnsureHelmDependencies(t *testing.T, chartDir string, skipIfChartsFolderExi
 		return
 	}
 
-	viper.SetConfigName("requirements")
+	viper.SetConfigName("Chart")
 	viper.AddConfigPath(chartDir)
 	var requirements ChartRequirements
 
@@ -182,16 +195,61 @@ func EnsureHelmDependencies(t *testing.T, chartDir string, skipIfChartsFolderExi
 
 	// Find any file dependencies in the subcharts so we can ensure
 	// they are up to date
-	for index, _ := range requirements.Dependencies {
+	for index := range requirements.Dependencies {
 		if value, ok := requirements.Dependencies[index]["repository"]; ok {
 			if strings.HasPrefix(value, "file:") {
 				subChartDir := strings.Trim(value, "file://")
-				HelmDep(t, &helm.Options{}, chartDir+"/"+subChartDir)
+				HelmDep(t, options, chartDir+"/"+subChartDir)
 			}
 		}
 	}
 
-	HelmDep(t, &helm.Options{}, chartDir)
+	HelmDep(t, options, chartDir)
+}
+
+// EnsureHelmLinting lints dependencies from the requirements.yaml file.
+func EnsureHelmLinting(t *testing.T, options *helm.Options, chartDir string, skipIfChartsFolderExists bool) {
+	IsHelm3(t, false, true)
+
+	if !files.FileExists(chartDir) {
+		require.FailNow(t, "Chart not found: "+chartDir)
+	}
+
+	if !files.FileExists(chartDir + "/Chart.yaml") {
+		logger.Log(t, "Skip chart dependencies - no chart.yaml")
+		return
+	}
+
+	if files.FileExists(chartDir+"/charts") && skipIfChartsFolderExists {
+		logger.Log(t, "Skip chart dependencies - charts folder already present")
+		return
+	}
+
+	viper.SetConfigName("Chart")
+	viper.AddConfigPath(chartDir)
+	var requirements ChartRequirements
+
+	if err := viper.ReadInConfig(); err != nil {
+		t.Fatalf("Error reading chart file, %s", err)
+	}
+
+	err := viper.Unmarshal(&requirements)
+	if err != nil {
+		t.Fatalf("Unable to decode into struct, %v", err)
+	}
+
+	// Find any file dependencies in the subcharts so we can ensure
+	// they are up to date
+	for index := range requirements.Dependencies {
+		if value, ok := requirements.Dependencies[index]["repository"]; ok {
+			if strings.HasPrefix(value, "file:") {
+				subChartDir := strings.Trim(value, "file://")
+				HelmLint(t, options, chartDir+"/"+subChartDir)
+			}
+		}
+	}
+
+	HelmLint(t, options, chartDir)
 }
 
 // UpgradeInstall will upgrade the release and chart will be deployed with the lastest configuration.This will fail
@@ -226,13 +284,15 @@ func UpgradeInstallE(t *testing.T, options *helm.Options, chart string, releaseN
 }
 
 // IsHelm3 will check whether the helm version is 3 failing the test if not
-func IsHelm3(t *testing.T, onlySkip bool) {
+func IsHelm3(t *testing.T, onlySkip bool, quiet bool) {
 	t.Helper()
 
 	version, err := helm.RunHelmCommandAndGetOutputE(
 		t, &helm.Options{}, "version", "--short", "--client",
 	)
-	logger.Logf(t, "---- The helm version is %s ----", version)
+	if !quiet {
+		logger.Logf(t, "---- The helm version is %s ----", version)
+	}
 	require.NoError(t, err)
 	if !strings.HasPrefix(version, "v3") && onlySkip {
 		t.Skip("---- Skipping Test (The helm version has to be v3+) ----")

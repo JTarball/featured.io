@@ -54,14 +54,34 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: featured/operator
           tags: master
-      - name: Create GKE cluster
-        uses: linkerd/linkerd2-action-gcloud@v1.0.1
-        with:
-          cloud_sdk_service_account_key: ${{ secrets.CLOUD_SDK_SERVICE_ACCOUNT_KEY }}
-          gcp_project: ${{ secrets.GCP_PROJECT }}
-          gcp_zone: europe-west1-d
-          create: true
-          name: testing-featured-${{ github.run_id }}
+
+  kind_integration:
+    name: Docker build
+    runs-on: ubuntu-18.04
+    needs: [docker_build_push]
+    steps:
+      - name: Setup default KinD cluster
+        uses: engineerd/setup-kind@v0.3.0
+        run: |
+          kubectl cluster-info
+          kubectl get pods -n kube-system
+          echo "current-context:" $(kubectl config current-context)
+          echo "environment-kubeconfig:" ${KUBECONFIG}
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+      - name: Acceptance Test - Testing Library
+        run: |
+          cd acceptance_test
+          go test -v ./testing/...
+      - name: Acceptance Test - Helm Tests
+        run: go test -v ./helm/...
+      # - name: Create GKE cluster
+      #   uses: linkerd/linkerd2-action-gcloud@v1.0.1
+      #   with:
+      #     cloud_sdk_service_account_key: ${{ secrets.CLOUD_SDK_SERVICE_ACCOUNT_KEY }}
+      #     gcp_project: ${{ secrets.GCP_PROJECT }}
+      #     gcp_zone: europe-west1-d
+      #     create: true
+      #     name: testing-featured-${{ github.run_id }}
     # - name: Run integration tests
     #   env:
     #     GITCOOKIE_SH: ${{ secrets.GITCOOKIE_SH }}
@@ -70,12 +90,6 @@ jobs:
     #     echo "$GITCOOKIE_SH" | bash
     #     version="$($HOME/.linkerd version --client --short | tr -cd '[:alnum:]-')"
     #     bin/test-run $HOME/.linkerd
-    #   - name: Acceptance Test - Testing Library
-    #     run: |
-    #       cd acceptance_test
-    #       go test -v ./acceptance_test/testing/...
-    #   - name: Acceptance Test - Helm Library
-    #     run: go test -v ./acceptance_test/helm/...
     #   - name: Acceptance Test - Unit Tests
     #     run: go test -v ./...
     #   - name: Acceptance Test - Integration Tests

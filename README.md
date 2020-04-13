@@ -6,11 +6,12 @@
 A distributed feature flag tool for Kubernetes
 
 > Requires kubernetes > v1.17
+
 > Requires helm 3
 
 ## Status
 
-*active development
+### Active Development
 
 ### Task list
 - [ ] Implement a Kubernetes operator

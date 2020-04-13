@@ -29,7 +29,7 @@ func TestMain(m *testing.M) {
 
 // TestUmbrellaDependencies tests that all dependencies are ensured for a umbrella chart
 func TestUmbrellaDependencies(t *testing.T) {
-	tt.IsHelm3(t, false)
+	tt.IsHelm3(t, false, false)
 
 	// We modify a subchart & the version requested in
 	// the umbrella requirements to check we include
