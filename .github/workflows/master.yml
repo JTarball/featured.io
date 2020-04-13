@@ -1,10 +1,14 @@
 # This is a basic workflow to help you get started with Actions
 name: master
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
-on: [push, pull_request]
-
+on:
+  push:
+    paths-ignore:
+      - "*.md"
+      - "**/*.md"
+      - "docs/"
+    branches:
+      - master
 jobs:
   test:
     strategy:

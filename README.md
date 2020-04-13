@@ -31,5 +31,7 @@ A distributed feature flag tool for Kubernetes
     - [x] Add helm linting test
     - [ ] Add helm chart upgrade / rollback test
     - [x] Add support for running simple k8s tests on `kind`
+- [ ] Implement proper CIs (Cloud Integration / Continuous Integration)
+  - [x] Improve `cost` (don't build pipeline for changes to .md etc)
 - [ ] Produce documentation on godoc website
 
