@@ -29,6 +29,7 @@ A distributed feature flag tool for Kubernetes
     - [x] Add defense against Helm 2 
     - [x] Add helm template test
     - [x] Add helm linting test
+    - [ ] Add helm install test
     - [ ] Add helm chart upgrade / rollback test
     - [x] Add support for running simple k8s tests on `kind`
 - [ ] Implement proper CIs (Cloud Integration / Continuous Integration)
