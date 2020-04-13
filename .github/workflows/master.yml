@@ -80,7 +80,9 @@ jobs:
           cd acceptance_test
           go test -v ./testing/...
       - name: Acceptance Test - Helm Tests
-        run: go test -v ./helm/...
+        run: |
+          cd acceptance_test
+          go test -v ./helm/...
       # - name: Create GKE cluster
       #   uses: linkerd/linkerd2-action-gcloud@v1.0.1
       #   with:
