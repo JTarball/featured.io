@@ -30,19 +30,19 @@ test-kind: test-kind-testing test-kind-helm test-kind-infrastructure-master test
 
 test-kind-helm:  ##@test Run helm kinD tests
 	@echo -e "${INFO} --- Run helm tests ----"
-	@cd acceptance_test && go test ./helm/... -tags=kind
+	@cd acceptance_test && go test -json ./helm/... -tags=kind | ./test-summary
 
 test-kind-testing:  ##@test Run testing library kinD tests
 	@echo -e "${INFO} --- Run testing library ----"
-	@cd acceptance_test && go test ./testing/... -tags=kind
+	@cd acceptance_test && go test -json ./testing/... -tags=kind | ./test-summary
 
 test-kind-infrastructure-master:  ##@test Run infratructure kinD tests based off master
 	@echo -e "${INFO} --- Run testing infrastructure master ----"
-	@cd acceptance_test && go test ./featured/infrastructure/master/... -tags=kind
+	@cd acceptance_test && go test -json ./featured/infrastructure/master/... -tags=kind | ./test-summary
 
 test-kind-infrastructure-local:  ##@test Run infratructure kinD tests tests based off local code
 	@echo -e "${INFO} --- Run testing infrastructure local ----"
-	@cd acceptance_test && go test ./featured/infrastructure/local/... -tags=kind
+	@cd acceptance_test && go test -json ./featured/infrastructure/local/... -tags=kind | ./test-summary
 
 
 ## ----

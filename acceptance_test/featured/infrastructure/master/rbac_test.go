@@ -1,7 +1,6 @@
-// +build gke
-// +build integration
+// +build kind
 
-package test
+package master
 
 import (
 	"os"

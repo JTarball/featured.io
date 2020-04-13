@@ -2,7 +2,7 @@
 
 // kind integration test - kubernetes in docker
 
-package helm
+package master
 
 import (
 	"path"
