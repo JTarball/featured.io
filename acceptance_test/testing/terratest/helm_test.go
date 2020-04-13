@@ -1,4 +1,4 @@
-// +build integration
+// +build kind
 
 package terratest_test
 

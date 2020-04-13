@@ -234,6 +234,8 @@ func (kt *KubeTest) CleanUp() {
 		}()
 	} else {
 		logger.Log(kt.T, "---- Skipping  cleanup ----")
+		logger.Log(kt.T, "---- Copy this should you want to investigate the namespace: ----")
+		logger.Log(kt.T, fmt.Sprintf("    kubectl config set-context --current --namespace %s", kt.Config.Namespace))
 	}
 
 }

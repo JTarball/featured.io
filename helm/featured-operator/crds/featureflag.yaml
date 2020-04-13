@@ -21,3 +21,15 @@ spec:
               description: "Label selector used for selecting application"
               additionalProperties:
                 type: string
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: featureflags.featurecontroller.featured.io.crd
+rules:
+  - apiGroups:
+      - featurecontroller.featured.io
+    resources:
+      - featureflag
+      - featureflag/finalizers
+    verbs: [get, list, create, update, delete, deletecollection, watch]

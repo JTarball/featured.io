@@ -1,3 +1,5 @@
+// +build kind
+
 package terratest_test
 
 import (

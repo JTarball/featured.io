@@ -43,7 +43,9 @@ func TestHelmInstall(t *testing.T) {
 	tt.EnsureHelmDependencies(t, options, chartPath, false)
 
 	// Release name set to namespace (unique)
-	defer helm.Delete(t, options, tc.Namespace, true)
+	if !*th.SkipCleanUp {
+		defer helm.Delete(t, options, tc.Namespace, true)
+	}
 	helm.Install(t, options, chartPath, tc.Namespace)
 
 }
@@ -73,7 +75,9 @@ func TestHelmTemplateKubectlApply(t *testing.T) {
 	output := helm.RenderTemplate(t, options, chartPath, tc.Namespace, []string{})
 
 	// Make sure to delete the resources at the end of the test
-	defer k8s.KubectlDeleteFromString(t, tc.KubeConfig, output)
+	if !*th.SkipCleanUp {
+		defer k8s.KubectlDeleteFromString(t, tc.KubeConfig, output)
+	}
 
 	// Now use kubectl to apply the rendered template
 	k8s.KubectlApplyFromString(t, tc.KubeConfig, output)
@@ -102,7 +106,9 @@ func TestHelmUpgradeInstall(t *testing.T) {
 	tt.EnsureHelmDependencies(t, options, chartPath, false)
 
 	// Release name set to namespace (unique)
-	defer helm.Delete(t, options, tc.Namespace, true)
+	if !*th.SkipCleanUp {
+		defer helm.Delete(t, options, tc.Namespace, true)
+	}
 	tt.UpgradeInstall(t, options, chartPath, tc.Namespace)
 
 }
@@ -129,7 +135,9 @@ func TestHelmUpgrade(t *testing.T) {
 	tt.EnsureHelmDependencies(t, options, chartPath, false)
 
 	// Release name set to namespace (unique)
-	defer helm.Delete(t, options, tc.Namespace, true)
+	if !*th.SkipCleanUp {
+		defer helm.Delete(t, options, tc.Namespace, true)
+	}
 	helm.Install(t, options, chartPath, tc.Namespace)
 
 	// Change helm version
@@ -159,7 +167,9 @@ func TestHelmRollback(t *testing.T) {
 	tt.EnsureHelmDependencies(t, options, chartPath, false)
 
 	// Release name set to namespace (unique)
-	defer helm.DeleteE(t, options, tc.Namespace, true)
+	if !*th.SkipCleanUp {
+		defer helm.DeleteE(t, options, tc.Namespace, true)
+	}
 	helm.Install(t, options, chartPath, tc.Namespace)
 
 	// Change helm version

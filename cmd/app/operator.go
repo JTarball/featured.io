@@ -35,6 +35,7 @@ import (
 
 // Run starts the mysql-operator controllers. This should never exit.
 func Run(flags *CMDFlags) error {
+	log.Infof("options: %v", flags)
 
 	// Load kubernetes config
 	kubeconfig, err := SetKubeConfig(flags)
