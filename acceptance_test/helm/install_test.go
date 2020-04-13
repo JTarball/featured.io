@@ -159,7 +159,7 @@ func TestHelmRollback(t *testing.T) {
 	tt.EnsureHelmDependencies(t, options, chartPath, false)
 
 	// Release name set to namespace (unique)
-	defer helm.Delete(t, options, tc.Namespace, true)
+	defer helm.DeleteE(t, options, tc.Namespace, true)
 	helm.Install(t, options, chartPath, tc.Namespace)
 
 	// Change helm version
@@ -167,6 +167,5 @@ func TestHelmRollback(t *testing.T) {
 	helm.Upgrade(t, options, chartPath, tc.Namespace)
 
 	// Rollback
-	kubet.FUConfig.HelmOptions.Version = "0.0.1"
-	helm.Rollback(t, options, tc.Namespace, "1")
+	tt.Rollback(t, options, tc.Namespace, "1")
 }

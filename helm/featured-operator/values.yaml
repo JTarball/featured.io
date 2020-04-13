@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: featured
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -20,10 +20,6 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name:
-
-operator:
-  crds:
-    register: true
 
 podSecurityContext:
   {}

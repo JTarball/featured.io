@@ -300,3 +300,19 @@ func IsHelm3(t *testing.T, onlySkip bool, quiet bool) {
 
 	require.Equal(t, true, strings.HasPrefix(version, "v3"), "This test only supports Helm 3")
 }
+
+// Rollback will downgrade the release to the specified version. This will fail
+// the test if there is an error.
+func Rollback(t *testing.T, options *helm.Options, releaseName string, revision string) {
+	require.NoError(t, RollbackE(t, options, releaseName, revision))
+}
+
+// RollbackE will downgrade the release to the specified version
+func RollbackE(t *testing.T, options *helm.Options, releaseName string, revision string) error {
+	var err error
+	args := []string{}
+	args = append(args, getNamespaceArgs(options)...)
+	args = append(args, releaseName, revision)
+	_, err = helm.RunHelmCommandAndGetOutputE(t, options, "rollback", args...)
+	return err
+}
