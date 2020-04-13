@@ -1,0 +1,29 @@
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: Role
+metadata:
+  name: {{ include "featured-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "featured-operator.labels" . | nindent 4 }}
+rules:
+  - apiGroups: ["featurecontroller.featured.io"]
+    resources:
+    - featureflag
+    - featureflag/finalizers
+    verbs: [ get, list, create, update, delete, deletecollection, watch ]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: {{ include "featured-operator.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "featured-operator.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: {{ include "featured-operator.fullname" . }}
+subjects:
+  - name: {{ include "featured-operator.serviceAccountName" . }}
+    namespace: {{ .Release.Namespace }}
+    kind: ServiceAccount

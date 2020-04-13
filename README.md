@@ -36,5 +36,6 @@ A distributed feature flag tool for Kubernetes
     - [ ] Add helm template test to check version is set with the correct hash
 - [ ] Implement proper CIs (Cloud Integration / Continuous Integration)
   - [x] Improve `cost` (don't build pipeline for changes to .md etc)
+- [ ] Move RBAC inside chart so support cluster wide (ClusterRole or Role)
 - [ ] Produce documentation on godoc website
 

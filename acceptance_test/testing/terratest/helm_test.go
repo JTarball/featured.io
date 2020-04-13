@@ -55,7 +55,7 @@ func TestUmbrellaDependencies(t *testing.T) {
 
 	// Bump helm umbrella dependencies
 	y := viper.New()
-	y.SetConfigName("requirements")
+	y.SetConfigName("Chart")
 	y.AddConfigPath("./testdata/umbrella")
 	var requirements tt.ChartRequirements
 
@@ -68,7 +68,7 @@ func TestUmbrellaDependencies(t *testing.T) {
 		t.Fatalf("Unable to decode into struct, %v", err)
 	}
 
-	for index, _ := range requirements.Dependencies {
+	for index := range requirements.Dependencies {
 		if value, ok := requirements.Dependencies[index]["name"]; ok {
 			if value == "subchartA" {
 				requirements.Dependencies[index]["version"] = version
@@ -86,7 +86,7 @@ func TestUmbrellaDependencies(t *testing.T) {
 	os.Remove("./testdata/umbrella/requirements.lock")
 
 	// Run actual test against EnsureHelmDependencies
-	tt.EnsureHelmDependencies(t, "./testdata/umbrella", false)
+	tt.EnsureHelmDependencies(t, &helm.Options{}, "./testdata/umbrella", false)
 
 	// Check charts folder is created and includes changes from subchart
 	require.Equal(t, files.FileExists("./testdata/umbrella/charts"), true)

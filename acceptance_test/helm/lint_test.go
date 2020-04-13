@@ -1,3 +1,5 @@
+// +build kind
+
 package helm
 
 import (
