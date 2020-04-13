@@ -9,12 +9,20 @@ all: run
 
 run:  ##@dev Run main operator code
 	@echo -e "${INFO} Running operator in dev mode"
-	@go run ./cmd/main.go --dev --loglevel "DEBUG"
+	@go run ./cmd/main.go --dev --loglevel "DEBUG" --namespace featured-test-g9kz6k
+
+## ---
 
 docker-build:  ##@build Build docker image for operator
 	@echo -e "${INFO} Building docker for operator"
 	docker build . -t ${OPERATOR_IMAGE_TAG}
 
+kind:  ##@build create kind cluster
+	kind create cluster
+
+kind-clean: ##@build delete kind cluster
+	@echo -e "${INFO} --- Cleaning kinD cluster ----"
+	kind delete cluster
 ## ----
 
 test-kind: test-kind-testing test-kind-helm test-kind-infrastructure-master test-kind-infrastructure-local  ##@test Run all integration tests with kinD (https://kind.sigs.k8s.io/)
@@ -44,3 +52,8 @@ fmt:   ##@ci Run gofmt against code
 
 vet:   ##@ci Run go vet against code
 	go vet ./...
+
+## ----
+
+clean: kind-clean
+	@echo -e "${INFO} --- Cleaning ----"

@@ -7,10 +7,12 @@ package test_helper
 import (
 	"flag"
 	"fmt"
+	"path"
 	"strings"
 	"sync"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/docker"
 	"github.com/gruntwork-io/terratest/modules/helm"
 	"github.com/gruntwork-io/terratest/modules/k8s"
 	"github.com/gruntwork-io/terratest/modules/logger"
@@ -54,6 +56,10 @@ var onlyOnce sync.Once
 
 // IsDev set if you want to run on local kubernets
 var IsDev = flag.Bool("dev", false, "Run tests on local kubernetes e.g. dfd/k3s (Setup up and point to it yourself)")
+
+// go test <file/dir> --skip-build
+// Skips build stage - very useful for local validation of integration tests
+var SkipBuild = flag.Bool("skip-build", false, "Skip building of resources")
 
 // go test <file/dir> --skip-cleanup
 // Skips deployment stage - very useful for local validation of integration tests
@@ -156,7 +162,7 @@ func NewKubeTest(t *testing.T) *KubeTest {
 			)
 
 			if *IsDev {
-				logger.Log(t, "---- On k3s/dfd will nuke anything from now ----")
+				logger.Log(t, "---- In Dev Mode so will nuke anything from now ----")
 				releaseAgo = metav1.Date(
 					now.Year(), now.Month(), now.Day(),
 					now.Hour(), now.Minute(), now.Second(), now.Nanosecond(), now.Location(),
@@ -221,6 +227,38 @@ func NewKubeTest(t *testing.T) *KubeTest {
 	return &KubeTest{
 		T:      t,
 		Config: tc,
+	}
+}
+
+// Build builds docker images & any chart dependencies
+func (kt *KubeTest) Build(chartPath string) {
+	if !*SkipBuild {
+		logger.Log(kt.T, "---- Build Docker Images ----")
+
+		//
+		// Build All Docker Images Required for Testing
+		//
+		rootPath := GetGitRootPath(kt.T)
+
+		// Operator
+		operatorTag := fmt.Sprintf("featured/operator:%s", kt.Config.Namespace)
+		buildOptions := &docker.BuildOptions{
+			Tags: []string{operatorTag},
+		}
+		docker.Build(kt.T, path.Join(rootPath, "./"), buildOptions)
+
+		// if !*th.IsK3s && !*th.IsDFD {
+		// 	logger.Log(kt.T, "---- Push Docker Images ----")
+		// 	// Expect credentials already sorted
+		// 	// FUTURE: Should we or shouldnt we login?
+		// 	terratest.Push(kt.T, operatorTag)
+		// }
+
+		//
+		// Helm dependencies (if the subcharts have changed)
+		//
+
+		tt.EnsureHelmDependencies(kt.T, &helm.Options{KubectlOptions: kt.Config.KubeConfig}, chartPath, false)
 	}
 }
 

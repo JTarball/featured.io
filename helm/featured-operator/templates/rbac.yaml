@@ -8,9 +8,10 @@ metadata:
 rules:
   - apiGroups: ["featurecontroller.featured.io"]
     resources:
-    - featureflag
-    - featureflag/finalizers
-    verbs: [ get, list, create, update, delete, deletecollection, watch ]
+    - featureflags
+    - featureflags/finalizers
+    - configmaps
+    verbs: [ "get", "list", "create", "update", "delete", "deletecollection", "watch" ]
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: RoleBinding

@@ -4,6 +4,7 @@ package feature
 // https://github.com/oracle/mysql-operator/blob/master/pkg/controllers/cluster/controller.go
 // https://github.com/kubernetes/sample-controller
 // https://medium.com/speechmatics/how-to-write-kubernetes-custom-controllers-in-go-8014c4a04235
+// https://www.magalix.com/blog/creating-custom-kubernetes-operators
 
 // Try and keep things in this file for now will likely have to abstract/modularise some of the function
 // as the complexity increases
@@ -246,6 +247,7 @@ func (c *FeatureController) processNextWorkItem() bool {
 // converge the two. It then updates the Status block of the Foo resource
 // with the current status of the resource.
 func (c *FeatureController) syncHandler(key string) error {
+	klog.V(4).Info("syncHandler")
 	// Convert the namespace/name string into a distinct namespace and name
 	namespace, name, err := cache.SplitMetaNamespaceKey(key)
 	if err != nil {

@@ -76,13 +76,12 @@ jobs:
           echo "environment-kubeconfig:" ${KUBECONFIG}
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
       - name: Acceptance Test - Testing Library
-        run: |
-          cd acceptance_test
-          go test -v ./testing/...
+        run: make test-kind-testing
       - name: Acceptance Test - Helm Tests
-        run: |
-          cd acceptance_test
-          go test -v ./helm/...
+        run: make test-kind-helm
+      - name: Acceptance Test - Infrastructure Master Tests
+        run: make test-kind-infrastructure-master
+
       # - name: Create GKE cluster
       #   uses: linkerd/linkerd2-action-gcloud@v1.0.1
       #   with:

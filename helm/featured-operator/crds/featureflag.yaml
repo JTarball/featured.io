@@ -11,25 +11,13 @@ spec:
     kind: FeatureFlag
     singular: featureflag
     plural: featureflags
-  validation:
-    openAPIV3Schema:
-      properties:
-        spec:
-          properties:
-            appSelector:
-              type: object
-              description: "Label selector used for selecting application"
-              additionalProperties:
-                type: string
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: featureflags.featurecontroller.featured.io.crd
-rules:
-  - apiGroups:
-      - featurecontroller.featured.io
-    resources:
-      - featureflag
-      - featureflag/finalizers
-    verbs: [get, list, create, update, delete, deletecollection, watch]
+  # validation:
+  #   openAPIV3Schema:
+  #     properties:
+  #       spec:
+  #         properties:
+  #           appSelector:
+  #             type: object
+  #             description: "Label selector used for selecting application"
+  #             additionalProperties:
+  #               type: string
