@@ -21,8 +21,8 @@ import (
 	th "github.com/featured.io/acceptance_test/testing/test-helper"
 )
 
-// TestAvailable tests the operator can be deployed and is ready (we take master image)
-func TestAvailable(t *testing.T) {
+// TestReady tests the operator can be deployed and is ready (we take master image)
+func TestReady(t *testing.T) {
 	kubet := th.NewKubeTest(t)
 	defer kubet.CleanUp()
 	tc := kubet.Config

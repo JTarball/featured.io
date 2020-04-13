@@ -26,23 +26,23 @@ kind-clean: ##@build delete kind cluster
 ## ----
 
 test-kind: test-kind-testing test-kind-helm test-kind-infrastructure-master test-kind-infrastructure-local  ##@test Run all integration tests with kinD (https://kind.sigs.k8s.io/)
-	@echo -e "${INFO} Run all kind integration tests"
+	@echo -e "${INFO} Ran all kind integration tests"
 
 test-kind-helm:  ##@test Run helm kinD tests
 	@echo -e "${INFO} --- Run helm tests ----"
-	@cd acceptance_test && go test -v ./helm/... -tags=kind
+	@cd acceptance_test && go test ./helm/... -tags=kind
 
 test-kind-testing:  ##@test Run testing library kinD tests
 	@echo -e "${INFO} --- Run testing library ----"
-	@cd acceptance_test && go test -v ./testing/... -tags=kind
+	@cd acceptance_test && go test ./testing/... -tags=kind
 
 test-kind-infrastructure-master:  ##@test Run infratructure kinD tests based off master
-	@echo -e "${INFO} --- Run testing library ----"
-	@cd acceptance_test && go test -v ./featured/infrastructure/master/... -tags=kind
+	@echo -e "${INFO} --- Run testing infrastructure master ----"
+	@cd acceptance_test && go test ./featured/infrastructure/master/... -tags=kind
 
 test-kind-infrastructure-local:  ##@test Run infratructure kinD tests tests based off local code
-	@echo -e "${INFO} --- Run testing library ----"
-	@cd acceptance_test && go test -v ./featured/infrastructure/local/... -tags=kind
+	@echo -e "${INFO} --- Run testing infrastructure local ----"
+	@cd acceptance_test && go test ./featured/infrastructure/local/... -tags=kind
 
 
 ## ----

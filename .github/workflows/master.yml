@@ -75,6 +75,7 @@ jobs:
           echo "current-context:" $(kubectl config current-context)
           echo "environment-kubeconfig:" ${KUBECONFIG}
           curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+          helm repo add stable https://kubernetes-charts.storage.googleapis.com
       - name: Acceptance Test - Testing Library
         run: make test-kind-testing
       - name: Acceptance Test - Helm Tests
