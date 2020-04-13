@@ -56,12 +56,13 @@ jobs:
           tags: master
 
   kind_integration:
-    name: Docker build
+    name: KinD Integration (Integration Tests)
     runs-on: ubuntu-18.04
     needs: [docker_build_push]
     steps:
       - name: Setup default KinD cluster
         uses: engineerd/setup-kind@v0.3.0
+      - name: Setup Helm 3
         run: |
           kubectl cluster-info
           kubectl get pods -n kube-system
