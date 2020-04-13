@@ -9,7 +9,7 @@ all: run
 
 run:  ##@dev Run main operator code
 	@echo -e "${INFO} Running operator in dev mode"
-	@go run ./cmd/main.go --dev --loglevel "DEBUG" --namespace featured-test-g9kz6k
+	@go run ./cmd/main.go --dev --loglevel "DEBUG"
 
 ## ---
 
