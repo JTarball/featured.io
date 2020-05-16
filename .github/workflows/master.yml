@@ -51,7 +51,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      - name: Build and Push Docker Images
+      - name: Build and Push Docker Image
         uses: docker/build-push-action@v1.0.1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
